@@ -2,3 +2,5 @@ networkx
 numpy
 scikit-learn
 matplotlib
+torch
+torch_geometric
