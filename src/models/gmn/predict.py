@@ -38,7 +38,6 @@ def load_model(model_path):
     model = GraphMatchingNetwork(in_channels=1, hidden_channels=32).to(device)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
-    print(f"Model loaded from {model_path}")
     return model
 
 
@@ -103,7 +102,7 @@ def predict(graph1, graph2):
     """
     # Load the model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "/root/gmb/src/models/gmn/model.pth"
+    model_path = "/Users/ive/PycharmProjects/gmb/src/models/gmn/model.pth"
     model = load_model(model_path)
 
     # Move graph data to the same device as the model
@@ -119,7 +118,7 @@ def predict(graph1, graph2):
 # Example usage
 if __name__ == "__main__":
     # Paths and parameters
-    feature_matrix_path = "~/gmb/dataset/PROTEIN/protein_feature_matrix"
+    feature_matrix_path = "../../../dataset/PROTEIN/protein_feature_matrix"
 
     # Load the PROTEIN graph data
     graph_list = load_protein_data(feature_matrix_path)
