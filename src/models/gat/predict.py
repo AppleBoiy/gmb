@@ -61,23 +61,39 @@ class GraphMatchingModel(torch.nn.Module):
         x = global_mean_pool(x, batch)
         return x
 
-# load dataset
-dataset = load_dataset()
+def predict(graph1, graph2):
+    """
+    Predict the similarity between two graphs using a pre-trained model.
 
-# Load the model architecture
-model = GraphMatchingModel(num_node_features=dataset.num_node_features, hidden_dim=64)
+    Args:
+        graph1: First graph (PyG Data object).
+        graph2: Second graph (PyG Data object).
 
-# Load the trained weights
-model.load_state_dict(torch.load('graph_matching_model.pth'))
+    Returns:
+        similarity_score: A scalar value between -1 and 1 indicating the similarity between the two graphs.
+    """
+    # Load the dataset (if node features or structure are dataset-dependent)
+    dataset = load_dataset()
 
-# Set the model to evaluation mode
-model.eval()
+    # Load the pre-trained model
+    model = GraphMatchingModel(num_node_features=dataset.num_node_features, hidden_dim=64)
+    model.load_state_dict(torch.load('model.pth'))
+    model.eval()  # Set model to evaluation mode
 
-# Select two graphs from the dataset
-graph1 = dataset[0]  # First graph
-graph2 = dataset[0]  # Second graph
+    # Compute the similarity between the graphs
+    similarity_score = predict_similarity(model, graph1, graph2)
+    return similarity_score
 
-# Predict similarity
-similarity_score = predict_similarity(model, graph1, graph2)
-print(graph1, graph2)
-print(f'Similarity between graph1 and graph2: {similarity_score:.4f}')
+
+# Example usage
+if __name__ == "__main__":
+    # Load dataset
+    dataset = load_dataset()
+
+    # Select two graphs for comparison
+    graph1 = dataset[0]
+    graph2 = dataset[1]  # Use a different graph for comparison
+
+    # Predict similarity
+    similarity = predict(graph1, graph2)
+    print(f"Predicted similarity between graph1 and graph2: {similarity:.4f}")

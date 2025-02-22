@@ -90,17 +90,42 @@ def predict_similarity(model, graph_list, idx1, idx2):
     return similarity_score
 
 
+def predict(graph1, graph2):
+    """
+    Predict the similarity between two graphs using a loaded model.
+
+    Args:
+        graph1: The first graph (torch_geometric.data.Data object).
+        graph2: The second graph (torch_geometric.data.Data object).
+
+    Returns:
+        similarity_score: The predicted similarity score.
+    """
+    # Load the model
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model_path = "/root/gmb/src/models/gmn/model.pth"
+    model = load_model(model_path)
+
+    # Move graph data to the same device as the model
+    graph1 = graph1.to(device)
+    graph2 = graph2.to(device)
+
+    with torch.no_grad():
+        similarity_score = model(graph1, graph2).item()
+
+    return similarity_score
+
+
+# Example usage
 if __name__ == "__main__":
     # Paths and parameters
-    feature_matrix_path = "./dataset/PROTEIN/protein_feature_matrix"
-    model_path = "gmn_model.pth"
-
-    # Load the pre-trained model
-    model = load_model(model_path)
+    feature_matrix_path = "~/gmb/dataset/PROTEIN/protein_feature_matrix"
 
     # Load the PROTEIN graph data
     graph_list = load_protein_data(feature_matrix_path)
 
-    # Example prediction between two graphs (indices 0 and 1)
-    idx1, idx2 = 0, 1
-    predict_similarity(model, graph_list, idx1, idx2)
+    # Predict similarity between two graphs
+    graph1, graph2 = graph_list[0], graph_list[1]
+    similarity = predict(graph1, graph2)
+    print(f"Predicted similarity score: {similarity:.4f}")
+
